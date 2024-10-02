@@ -18,15 +18,15 @@ intents.message_content = True
 # Création du bot
 bot = commands.Bot(command_prefix='!', intents=intents)
 
-# Fonction pour détecter les messages avec le son "quoi"
+# Fonction pour détecter les messages avec les abréviations de "quoi"
 @bot.event
 async def on_message(message):
     # Empêche le bot de répondre à ses propres messages
     if message.author == bot.user:
         return
     
-    # Vérifie si le message se termine par un son "quoi" (coi, quoi, kwa, etc.)
-    if re.search(r'(quoi|kwa|coi|koa|koua|quoa|quwa)$', message.content, re.IGNORECASE):
+    # Vérifie si le message contient une variation ou abréviation de "quoi"
+    if re.search(r'(pk|pq|qwa|koi|kwa|koa|koua|pkoi|pquoi)', message.content, re.IGNORECASE):
         # Répond avec "feur" et plein d'emojis goofy
         await message.channel.send("feur 🤪🤣😂🙃😛")
 

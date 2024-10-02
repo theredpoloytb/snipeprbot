@@ -85,9 +85,9 @@ async def ban(ctx, member: discord.Member, *, reason=None):
     await member.ban(reason=reason)
     await ctx.send(f'{member.mention} a été banni(e) du serveur. Raison: {reason}')
 
-# Commande help personnalisée
-@bot.command()
-async def help(ctx):
+# Commande help personnalisée (renommée pour éviter les conflits)
+@bot.command(name="aide")
+async def myhelp(ctx):
     """Affiche toutes les commandes disponibles"""
     embed = discord.Embed(title="Commandes disponibles", color=discord.Color.blue())
     

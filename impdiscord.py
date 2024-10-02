@@ -1,5 +1,6 @@
 import os
 import discord
+import re  # Importation pour les expressions régulières
 from dotenv import load_dotenv
 from discord.ext import commands
 from keep_alive import keep_alive
@@ -17,7 +18,22 @@ intents.message_content = True
 # Création du bot
 bot = commands.Bot(command_prefix='!', intents=intents)
 
-# Commande ping
+# Fonction pour détecter les messages avec le son "quoi"
+@bot.event
+async def on_message(message):
+    # Empêche le bot de répondre à ses propres messages
+    if message.author == bot.user:
+        return
+    
+    # Vérifie si le message se termine par un son "quoi" (coi, quoi, kwa, etc.)
+    if re.search(r'(quoi|kwa|coi|koa|koua|quoa|quwa)$', message.content, re.IGNORECASE):
+        # Répond avec "feur" et plein d'emojis goofy
+        await message.channel.send("feur 🤪🤣😂🙃😛")
+
+    # Nécessaire pour que les autres commandes fonctionnent toujours
+    await bot.process_commands(message)
+
+# Commandes classiques (comme avant)
 @bot.command()
 async def ping(ctx):
     """Répond avec Pong et la latence en millisecondes"""
@@ -63,12 +79,6 @@ async def clear(ctx, amount: int):
     await ctx.channel.purge(limit=amount)
     await ctx.send(f'{amount} messages ont été supprimés.', delete_after=5)
 
-# Gérer les erreurs si l'utilisateur n'a pas les permissions requises
-@clear.error
-async def clear_error(ctx, error):
-    if isinstance(error, commands.MissingPermissions):
-        await ctx.send("Vous n'avez pas la permission de supprimer des messages.")
-
 # Commande kick (réservée aux admins)
 @bot.command()
 @commands.has_permissions(kick_members=True)
@@ -85,7 +95,7 @@ async def ban(ctx, member: discord.Member, *, reason=None):
     await member.ban(reason=reason)
     await ctx.send(f'{member.mention} a été banni(e) du serveur. Raison: {reason}')
 
-# Commande help personnalisée (renommée pour éviter les conflits)
+# Commande help personnalisée
 @bot.command(name="aide")
 async def myhelp(ctx):
     """Affiche toutes les commandes disponibles"""
